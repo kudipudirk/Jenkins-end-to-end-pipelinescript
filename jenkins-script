@@ -1,0 +1,17 @@
+node {
+    stage ("CODE") {
+        git branch: 'main', url: 'https://github.com/kudipudirk/sampleweb.git'
+    }
+    stage ("BUILD") {
+        def mavenHome = tool name: "maven", type: "maven"
+        def mavenCMD = "$mavenHome/bin/mvn"
+        sh "$mavenCMD clean package"
+    }
+    stage ("TEST") {
+        withSonarQubeEnv("mysonar") {
+            def mavenHome = tool name: "maven", type: "maven"
+            def mavenCMD = "$mavenHome/bin/mvn"
+            sh "$mavenCMD sonar:sonar"
+        }
+    }
+}
